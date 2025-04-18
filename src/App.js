@@ -2,6 +2,7 @@ import React from 'react';
 import './App.css';
 import { BrowserRouter as Router, Route,Redirect, Switch } from 'react-router-dom';
 import Utilisateur from './Utilisateurs/pages/Utilisateur';
+import UtilisateurPlaces from './Places/pages/UtilisateurPlaces';
  import NouvellePlace from './Places/pages/NouvellePlace'; // Importation de la page NouvellePlace
  import NagitionPrincipale from './Partage/Navigation/NavigationPrincipale';
 
@@ -15,6 +16,9 @@ const App = () => {
         
           <Route path="/" exact> 
             <Utilisateur />
+          </Route>
+          <Route path="/utilisateur/:u1/places" exact>
+            <UtilisateurPlaces /> {/* Utilisation de la page UtilisateurPlaces */}
           </Route>
           <Route path="/places/nouvelle" exact>
             <NouvellePlace /> {/* Utilisation de la page NouvellePlace */}  

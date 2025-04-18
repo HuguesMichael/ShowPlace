@@ -9,7 +9,7 @@ const ItemUtilisateur = props => {
         <li className="item-utilisateur">
             {/* Utilisation de Link pour naviguer vers la page de l'utilisateur */}
             <Card className="item-utilisateur__card">
-            <Link to={`${props.id}/utilisateurs/`} className="item-utilisateur__link">
+            <Link to={`utilisateur/${props.id}/places`} className="item-utilisateur__link">
             <div className="item-utilisateur__image">
                 <Avatar image={props.image} alt={props.nom} />
             </div>
