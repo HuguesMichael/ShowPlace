@@ -9,7 +9,7 @@ const NavigationPrincipale = props => {
     const [TiroirEstOuvert, setTiroirEstOuvert] = useState(false); // État pour gérer l'ouverture et la fermeture du tiroir latéral
     const TiroirOuvert = () => {
         setTiroirEstOuvert(true); // Ouvre le tiroir latéral
-    } 
+    }  
      
     const TiroirFerme = () => {
         setTiroirEstOuvert(false); // Inverse l'état du tiroir
@@ -17,7 +17,7 @@ const NavigationPrincipale = props => {
     return (
         <React.Fragment>
         {TiroirEstOuvert && <ToileFond onClick={TiroirFerme}/>} {/* Toile de fond pour fermer le tiroir latéral */}
-            <TiroirLateral show={TiroirEstOuvert} onClick={TiroirFerme}> 
+        <TiroirLateral show={TiroirEstOuvert} onClick={TiroirFerme}> 
             <nav className="navigation-principae-tiroir-nav">
             <LiensNavigation/> {/* Utilisation du composant LiensNavigation */}
             </nav>
@@ -39,7 +39,7 @@ const NavigationPrincipale = props => {
                 </nav>
         </EntetePrincipale>
         </React.Fragment>
-    );
+    ); 
 }
 
 export default NavigationPrincipale;
