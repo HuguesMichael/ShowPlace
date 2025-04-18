@@ -17,7 +17,7 @@ const App = () => {
           <Route path="/" exact> 
             <Utilisateur />
           </Route>
-          <Route path="/utilisateur/:u1/places" exact>
+          <Route path="/utilisateur/:userId/places" exact>
             <UtilisateurPlaces /> {/* Utilisation de la page UtilisateurPlaces */}
           </Route>
           <Route path="/places/nouvelle" exact>
