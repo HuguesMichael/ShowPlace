@@ -2,13 +2,14 @@ import react from "react";
 import "./ListePlaces.css";
 import Card from "../../Partage/composants/UIElements/Card";
 import ItemPlace from "./ItemPlace";
+import Button from "../../Partage/composants/FormElements/Button";
 
 const ListePlaces = props => {
     if(props.items.length === 0) { 
       return <div className="liste-places-center">
-        <Card className="liste-places-card">
+        <Card>
           <h2>Aucune place trouvée. Voulez-vous en creer une?</h2>
-          <button className="btn" onClick={props.onCreatePlace}>Creer une place</button>    
+          <Button inverse to="/places/nouvelle">Partager une place</Button>  
         </Card>
         </div>;
     }

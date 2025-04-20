@@ -7,7 +7,7 @@ import { VALIDATOR_MINLENGTH, VALIDATOR_REQUIRE } from '../../Partage/Util/valid
 import Button from '../../Partage/composants/FormElements/Button';
 import { useCallback, useReducer } from 'react';
 import { useForm } from '../../Partage/hooks/Form-hooks'; // on importe le hook useForm qui va nous permettre de gérer l'état de mon formulaire
-
+import Card from '../../Partage/composants/UIElements/Card';
 const PLACE_PROVISOIRE = [
     {
         id: "p1",
@@ -62,7 +62,8 @@ const  MiseAjourPlace = () => {
     const identifiedPlace = PLACE_PROVISOIRE.find(place => place.id === placeId); // Filtrage des places par utilisat
    
     useEffect(() => { // useEffect est un hook qui permet de gérer les effets de bord dans un composant fonctionnel
-     setFormData({
+      if(identifiedPlace) { // si la place n'est pas trouvée, on affiche un message d'erreur
+        setFormData({
         title: { 
             value: identifiedPlace.title, // valeur initiale provenant de la place identifiee après la requete de selection
             isValid: true // on met la validité de l'input à true car on a déjà une valeur valide
@@ -72,14 +73,20 @@ const  MiseAjourPlace = () => {
             isValid: true // on met la validité de l'input à true car on a déjà une valeur valide
         }
          // on met l'état de mon formulaire à false car le chargement est terminé
-     }, true)// on utilise la fonction setFormData pour mettre à jour l'état de mon formulaire avec les inputs du formulaire qui seront necessaire pour la validation 
+     }, true)
+            // on utilise la fonction setFormData pour mettre à jour l'état de mon formulaire avec les inputs du formulaire qui seront necessaire pour la validation 
+    }
      setIsLoading(false);
     }, [setFormData, identifiedPlace]); // on utilise le hook useEffect pour mettre à jour l'état de mon formulaire lorsque la place identifiée change
    
-    if(!identifiedPlace) {
-        return <div className='center'>
+    if(!identifiedPlace) { // Si la place n'est pas trouvée, on affiche un message d'erreur
+        return ( <div className='center'>
+            <Card>  
             <h2>Place non trouvée </h2>
-            </div>; // Si la place n'est pas trouvée, on affiche un message d'erreur
+            </Card>
+            </div>
+            );
+          
     }
 
     if(isLoading) 

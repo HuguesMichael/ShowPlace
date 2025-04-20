@@ -9,14 +9,32 @@ import Map from "../../Partage/composants/UIElements/Map"; // Importation du com
 
 const ItemPlace = props => {
     const [VoirCarte, setVoirCarte] = useState(false); // Etat pour afficher ou masquer le modal
-    const ouvrirCarteHandler = () => {
+    const [VoirConfirmationModal, setVoirConfirmationModal] = useState(false); // Etat pour afficher ou masquer le modal de suppression
+     // Logique pour modifier la place   
+     const ouvrirCarteHandler = () => {
         setVoirCarte(true); // Ouvre le modal
     };
     const fermerCarteHandler = () => { 
         setVoirCarte(false); // Ferme le modal
     }
+    // Logique pour supprimer la place
+    const ouvrirConfirmationModalHandler = () => {  
+        setVoirConfirmationModal(true); // Ouvre le modal de suppression
 
-    return <React.Fragment>
+    };
+    const fermerConfirmationModalHandler = () => {
+        setVoirConfirmationModal(false); // Ferme le modal de suppression
+
+    }
+    const confirmerSuppressionHandler = () => {
+        setVoirConfirmationModal(false);
+        console.log("SUPPRIMER........"); // Ferme le modal de suppression
+        // Logique pour supprimer la place ici
+        // Par exemple, appeler une fonction pour supprimer la place dans la base de données
+    }
+
+   
+     return <React.Fragment>  
     <Modal
         show={VoirCarte} // Affiche le modal si l'état est vrai
         onCancel={fermerCarteHandler} // Ferme le modal lorsque l'utilisateur clique en dehors de celui-ci
@@ -40,6 +58,23 @@ const ItemPlace = props => {
         </div>*/}
 
         </Modal>
+
+        <Modal
+        show={VoirConfirmationModal} // Affiche le modal si l'état est vrai
+         onCancel={fermerConfirmationModalHandler} // Ferme le modal lorsque l'utilisateur clique en dehors de celui-ci
+        header="Etes vous sûr(e)?"  // Titre du modal
+        footer={<React.Fragment>
+                 <Button inverse onClick={fermerConfirmationModalHandler}>NON</Button>
+                 <Button danger onClick={confirmerSuppressionHandler}>OUI</Button> 
+                 </React.Fragment> 
+                 }     
+        contentClass="item-place__modal-content" // Classe CSS pour le contenu du modal
+        headerClass="item-place__modal-header" // Classe CSS pour l'en-tête du modal
+        footerClass="item-place__modal-actions" // Classe CSS pour le pied de page du modal
+        > 
+           <h1> Voulez-Vous vraiment supprimer cette place?</h1>
+        </Modal>
+        
      <li className="item-place">  
     <Card className="item-place__card"> 
         <div className="item-place__image">
@@ -53,7 +88,7 @@ const ItemPlace = props => {
         <div className="item-place__actions">
             <Button inverse onClick={ouvrirCarteHandler} >VOIR SUR LA CARTE</Button> 
             <Button to={`/places/${props.id}`}>Modifier</Button> 
-            <Button danger>Supprimer</Button>
+            <Button danger onClick={ouvrirConfirmationModalHandler}> Supprimer</Button>
             </div>
         </Card>
     </li>

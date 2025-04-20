@@ -61,3 +61,7 @@
 .item-utilisateur__info {
     align-items: flex-start;
 }
+.center{
+    text-align: center;
+    margin-top: 10px; /* Optional: Add some space above the text */
+}
