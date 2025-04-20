@@ -26,8 +26,8 @@ const Input = (props) => {
     // Utilisation de useReducer pour gérer l'état du champ d'entrée
  const [inputState, dispatch] = useReducer(inputReducer,
         {
-            value:props.value || '', // valeur initiale de l'input, si elle n'est pas fournie, on met une chaîne vide
-            isValid: props.valid || false, // validité initiale de l'input, si elle n'est pas fournie, on met false
+            value:props.initialValue || '', // valeur initiale de l'input, si elle n'est pas fournie, on met une chaîne vide
+            isValid: props.initialValid || false, // validité initiale de l'input, si elle n'est pas fournie, on met false
             isTouched: false // état initial du champ d'entrée
         }); 
          // useReducer est un hook qui permet de gérer l'état d'un composant de manière plus complexe que useState      // Appel de useReducer pour initialiser le réducteur

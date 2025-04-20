@@ -1,62 +1,31 @@
-import react,{useCallback,useReducer} from 'react';
+import react from 'react';
 import "./PlaceForm.css";
 import Input from '../../Partage/composants/FormElements/Input';
 import Button from '../../Partage/composants/FormElements/Button';
 import {VALIDATOR_MINLENGTH, VALIDATOR_REQUIRE} from '../../Partage/Util/validators'; // on importe la fonction validate qui va nous permettre de valider notre input
+import {useForm} from '../../Partage/hooks/Form-hooks'; // on importe le hook useForm qui va nous permettre de gérer l'état de mon formulaire
 
-const formReducer = (state, action) => { // fonction de mon réducteur qui va gérer l'état gnéral de mon formulaire
-    switch (action.type) {  
-        case 'INPUT_CHANGE':
-            let formValid = true; // on initialise la validité de mon formulaire à true
-            for(const inputId in state.inputs){ // on parcourt les inputs de mon formulaire
-            if(inputId === action.inputId){ // si l'inputId est égal à l'inputId de l'action
-            formValid = formValid && action.isValid; // on met à jour la validité de mon formulaire
-        } else {
-            formValid = formValid && state.inputs[inputId].isValid; // on met à jour la validité de mon formulaire
-        }
-    }   
-            return { // on retourne un nouvel état
-                ...state, // on utilise le spread operator pour garder l'état précédent et mettre à jour la valeur
-                inputs: { // on met à jour les inputs de mon formulaire 
-                    ...state.inputs, // on utilise le spread operator pour garder l'état précédent et mettre à jour la valeur
-                    [action.inputId]: { // on met à jour l'inputId de mon formulaire  
-                        value: action.value, // on met à jour la valeur de l'input
-                        isValid: action.isValid // on met à jour la validité de l'input
-                    }  
-                },
-                isValid: formValid // on met à jour la validité de mon formulaire
-            };
-        default:
-            return state; // on retourne l'état précédent
-    }
-}   
-// le réducteur est une fonction qui prend l'état actuel et une action, et retourne un nouvel état
 
 const NouvellePlace = () => {  
-    // Utilisation de useReducer pour gérer l'état du formulaire
-    const [formState, dispatch] = useReducer(formReducer, { // on utilise le hook useReducer pour gérer l'état de mon formulaire    
-        inputs: { // on initialise l'état de mon formulaire
-            title: { // on initialise l'état de mon input
-                value: '', // valeur initiale de l'input
-                isValid: false // validité initiale de l'input
+  const [formState, inputHandler] = useForm(
+        { // on initialise l'état de mon formulaire avec les inputs du formulaire qui seront necessaire pour la validation
+            title: { // on initialise l'état de mon formulaire avec les inputs du formulaire qui seront necessaire pour la validation   
+                value: '', // valeur initiale de l'input, si elle n'est pas fournie, on met une chaîne vide
+                isValid: false // validité initiale de l'input, si elle n'est pas fournie, on met false
             },
-            description: { // on initialise l'état de mon input
-                value: '', // valeur initiale de l'input
-                isValid: false // validité initiale de l'input
+            description: { // on initialise l'état de mon formulaire avec les inputs du formulaire qui seront necessaire pour la validation
+                value: '', // valeur initiale de l'input, si elle n'est pas fournie, on met une chaîne vide
+                isValid: false // validité initiale de l'input, si elle n'est pas fournie, on met false
+            },
+            adress: { // on initialise l'état de mon formulaire avec les inputs du formulaire qui seront necessaire pour la validation  
+                value: '', // valeur initiale de l'input, si elle n'est pas fournie, on met une chaîne vide
+                isValid: false // validité initiale de l'input, si elle n'est pas fournie, on met false 
             }
-        },
-        isValid: false // validité initiale de mon formulaire
-    }); // on initialise l'état de mon formulaire avec un objet qui contient les inputs et la validité du formulaire
+        }, // on initialise l'état de mon formulaire avec les inputs du formulaire qui seront necessaire pour la validation
+        false // on initialise l'état de mon formulaire avec les inputs et la validité
+    ); // on utilise le hook useForm pour gérer l'état de mon formulaire
 
-
-    const inputHandler = useCallback((id, value, isValid) => { // ces trois paramètres sont passés par le composant Input
-        dispatch({ // on utilise la fonction dispatch pour mettre à jour l'état de mon formulaire
-            type: 'INPUT_CHANGE', // type d'action
-            value: value, // valeur de l'input
-            isValid: isValid, // validité de l'input
-            inputId: id // id de l'input
-        }); // on utilise la fonction dispatch pour mettre à jour l'état de mon formulaire
-    }, []); // useCallback est un hook qui permet de mémoriser une fonction et de ne pas la recréer à chaque rendu du composant
+    
     
     const placeSubmitHandler = event => { // fonction qui va gérer la soumission de mon formulaire
         event.preventDefault(); // on empêche le comportement par défaut du formulaire
