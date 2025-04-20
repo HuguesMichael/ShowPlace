@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route,Redirect, Switch } from 'react-router-do
 import Utilisateur from './Utilisateurs/pages/Utilisateur';
 import UtilisateurPlaces from './Places/pages/UtilisateurPlaces';
  import NouvellePlace from './Places/pages/NouvellePlace'; // Importation de la page NouvellePlace
+import MiseAjourPlace from './Places/pages/MiseAjourPlace'; // Importation de la page MiseAjourPlace
  import NagitionPrincipale from './Partage/Navigation/NavigationPrincipale';
 
 const App = () => {
@@ -22,6 +23,9 @@ const App = () => {
           </Route>
           <Route path="/places/nouvelle" exact>
             <NouvellePlace /> {/* Utilisation de la page NouvellePlace */}  
+          </Route>
+          <Route path="/places/:placeId" exact>
+            <MiseAjourPlace /> {/* Utilisation de la page Mise à jour */}  
           </Route>
         <Redirect to="/" />
       </Switch>
