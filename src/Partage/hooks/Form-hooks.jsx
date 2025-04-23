@@ -3,8 +3,11 @@ import { useCallback,useReducer } from "react";
 const formReducer = (state, action) => { // fonction de mon réducteur qui va gérer l'état gnéral de mon formulaire
     switch (action.type) {  
         case 'INPUT_CHANGE':
-            let formValid = true; // on initialise la validité de mon formulaire à true
+            let formValid = true; // on cree une variable booleen que nous mettons à true
             for(const inputId in state.inputs){ // on parcourt les inputs de mon formulaire
+                if(!state.inputs[inputId]){ // si l'inputId n'existe pas
+                    continue; // on passe à l'itération suivante
+                }
             if(inputId === action.inputId){ // si l'inputId est égal à l'inputId de l'action
             formValid = formValid && action.isValid; // on met à jour la validité de mon formulaire
         } else {

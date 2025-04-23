@@ -1,10 +1,11 @@
-import react,{useState} from "react";
+import react,{useState,useContext} from "react";
 import "./ItemPlace.css";
 import Card from "../../Partage/composants/UIElements/Card";
 import Button from "../../Partage/composants/FormElements/Button";
 import Modal from "../../Partage/composants/UIElements/Modal";
 import React from "react";
 import Map from "../../Partage/composants/UIElements/Map"; // Importation du composant Map
+import { AuthContext } from "../../Partage/context/auth-context"; // Importation du contexte d'authentification
 
 
 const ItemPlace = props => {
@@ -33,7 +34,7 @@ const ItemPlace = props => {
         // Par exemple, appeler une fonction pour supprimer la place dans la base de données
     }
 
-   
+   const auth=useContext(AuthContext); // Utilisation du contexte d'authentification
      return <React.Fragment>  
     <Modal
         show={VoirCarte} // Affiche le modal si l'état est vrai
@@ -87,8 +88,8 @@ const ItemPlace = props => {
         </div>
         <div className="item-place__actions">
             <Button inverse onClick={ouvrirCarteHandler} >VOIR SUR LA CARTE</Button> 
-            <Button to={`/places/${props.id}`}>Modifier</Button> 
-            <Button danger onClick={ouvrirConfirmationModalHandler}> Supprimer</Button>
+            {auth.isLoggedIn&&<Button to={`/places/${props.id}`}>Modifier</Button>}
+            {auth.isLoggedIn&&<Button danger onClick={ouvrirConfirmationModalHandler}> Supprimer</Button>}
             </div>
         </Card>
     </li>

@@ -34,7 +34,7 @@ const Input = (props) => {
      // Le premier argument est la fonction de réducteur, le deuxième est l'état initial
     // inputState est l'état actuel du champ d'entrée, dispatch est la fonction pour mettre à jour cet état
     // inputReducer est la fonction qui gère les actions sur l'état du champ d'entrée et renvoie un nouvel état
-   const {value,isValid} = inputState; // on utilise la décomposition pour récupérer la valeur et la validité de l'input
+   const {value,isValid,isTouched} = inputState; // on utilise la décomposition pour récupérer la valeur et la validité de l'input
     const {rows,id, label, type, placeholder,onInput } = props;
    // Utilisation de useEffect pour gérer les effets secondaires
     useEffect(() => { // useEffect est un hook qui permet de gérer les effets secondaires dans un composant fonctionnel
@@ -72,6 +72,7 @@ const Input = (props) => {
         onChange={changeHandler}
         value={inputState.value}
         onBlur={touchHandler}
+    
         />);
     return (
         <div className={`form-control ${!inputState.isValid && inputState.isTouched &&

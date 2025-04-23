@@ -8,4 +8,11 @@
     border-radius: 6px;
     background: white;
   }
-  
+  .place-form__actions {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+ 
+  }
+    
