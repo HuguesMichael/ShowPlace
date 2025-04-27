@@ -1,7 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import placeRoutes from './routes/places-routes.js';
-
+import HttpError from './models/http-error.js';
 const app= express();
 const port =5000;
 
@@ -10,6 +10,12 @@ app.use(bodyParser.json());
 
 app.use('/api/places/',placeRoutes); //=> /api/places/... express ne transmettra que les requêtes commençant par
                                      // /api/places/
+                
+  app.use((req, res, next)=>{
+       const error = new HttpError('Chemin non valide',404);
+       throw error;
+
+  })
 app.use((error, req, res, next)=>{  // si vous utilisez un middleware avec quatre paramètres, express le considera comme une fonction erreur
 if(res.headerSent){
   return next (error);
