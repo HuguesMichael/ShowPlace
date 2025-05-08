@@ -19,7 +19,7 @@ const ListeUtilisateurs = props => {
             id={utilisateur.id}
             nom={utilisateur.nom}
             image={utilisateur.image}
-            nombreDePlaces={utilisateur.nombreDePlaces}
+            nombreDePlaces={utilisateur.places.length}
             // Ajoutez ici d'autres informations sur l'utilisateur
           />
     

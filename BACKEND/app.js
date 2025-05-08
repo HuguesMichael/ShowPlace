@@ -9,7 +9,15 @@ const port =5000;
 
 //app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
-
+/* Middleware pour contourner l' erreur  "Access to fetch at 'http://localhost:5000/api/users/signup' 
+from origin 'http://localhost:3000' has been blocked by CORS policy ..." visible dans la console du navigateur */
+app.use((req, res, next)=>{
+  res.setHeader('Access-Control-Allow-Origin','*');
+  res.setHeader('Access-Control-Allow-Headers',
+    'Origin, X-requested-With, Content-Type, Accept, Authorization');
+   res.setHeader('Access-Control-Allows-Methods','GET, POST, PATCH, DELETE'); 
+  next();
+})
 app.use('/api/places/',placeRoutes); //=> /api/places/... express ne transmettra que les requêtes commençant par
                                      // /api/places/
 

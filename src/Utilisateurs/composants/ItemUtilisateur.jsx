@@ -15,7 +15,7 @@ const ItemUtilisateur = props => {
             </div>
             <div className="item-utilisateur__info">
                <a href=""><h2>{props.nom}</h2></a> 
-                <h3>{props.nombreDePlaces} {props.nombreDePlaces === 1? "places" :"places"}</h3>
+                <h3>{props.nombreDePlaces} {props.nombreDePlaces <=1? "place" :"places"}</h3>
                 {/* Ajoutez ici d'autres informations sur l'utilisateur */}
             </div>
             </Link>

@@ -2,17 +2,22 @@ import react,{useState,useContext} from 'react';
 import "../../Places/pages/PlaceForm.css";
 import Input from '../../Partage/composants/FormElements/Input';
 import Button from '../../Partage/composants/FormElements/Button';
+import ErrorModal from '../../Partage/composants/UIElements/ErrorModal';
+import LoadingSpinner from '../../Partage/composants/UIElements/LoadingSpinner';
 import {VALIDATOR_EMAIL, VALIDATOR_MINLENGTH, VALIDATOR_REQUIRE} from '../../Partage/Util/validators'; // on importe la fonction validate qui va nous permettre de valider notre input
 import {useForm} from '../../Partage/hooks/Form-hooks'; // on importe le hook useForm qui va nous permettre de gérer l'état de mon formulaire
+import { useHttpClient } from '../../Partage/hooks/http-hook';
 import React from 'react';
 import "./Auth.css";
 import Card from '../../Partage/composants/UIElements/Card';
 import { AuthContext } from '../../Partage/context/auth-context'; // on importe le contexte d'authentification
 
 
+
 const Auth = () => {  
   const auth = useContext(AuthContext); // on utilise le contexte d'authentification pour gérer l'état de mon formulaire
   const [isLoginMode, setIsLoginMode] = useState(true); // on initialise l'état de mon formulaire avec les inputs du formulaire qui seront necessaire pour la validation
+   const {isLoading, error, sendRequest, clearError}=useHttpClient();
   const [formState, inputHandler, setFormData] = useForm(
         { // on initialise l'état de mon formulaire avec les inputs du formulaire qui seront necessaire pour la validation
             email: { // on initialise l'état de mon formulaire avec les inputs du formulaire qui seront necessaire pour la validation   
@@ -49,22 +54,65 @@ const Auth = () => {
             ) // on utilise le hook useForm pour gérer l'état de mon formulaire
             }
       
-      setIsLoginMode(prevMode => !prevMode); // on inverse le mode de connexion
+         setIsLoginMode(prevMode => !prevMode); // on inverse le mode de connexion
       
         }
     
-    const compteSubmitHandler = event => { // fonction qui va gérer la soumission de mon formulaire
+    const compteSubmitHandler = async event => { // fonction qui va gérer la soumission de mon formulaire
         event.preventDefault(); // on empêche le comportement par défaut du formulaire
         // on va récupérer les valeurs de mon formulaire et les envoyer à mon API en backend
-       // console.log(formState.inputs); // on affiche les valeurs de mon formulaire dans la console
-       auth.login()
-     // isLoginMode?auth.login():auth.logout(); // si le mode de connexion est vrai, on appelle la fonction login du contexte d'authentification
-       // console.log(Button.value); // on affiche un message dans la console
+       
+      if(isLoginMode){
+        /*------------------------------ Code pour login ------------------------*/    
+        try {
+          await sendRequest(
+            "http://localhost:5000/api/users/login",
+            'POST',
+            {
+             'Content-Type': 'application/json'// sans ceci notre backend ne saura pas quel type de données il reçoit
+           },
+           JSON.stringify({
+             email:formState.inputs.email.value,
+             motdepasse: formState.inputs.motdepasse.value
+           })
+        )
+            auth.login();
+          
+        } catch (err) {
+          //console.log(error);
+        }  
+      } else{
+        /*------------------------------ Code pour signup ------------------------*/
+        try {
+          
+           await sendRequest(
+            "http://localhost:5000/api/users/signup",   // fetch === Aller chercher
+            'POST',
+            {
+                'Content-Type': 'application/json'// sans ceci notre backend ne saura pas quel type de données il reçoit
+              },
+              JSON.stringify({
+                nom: formState.inputs.nom.value,
+                email:formState.inputs.email.value,
+                motdepasse: formState.inputs.motdepasse.value
+              })
+            
+           )
+               auth.login();
+        } catch (err) {
+          
+          console.log(error);
+        }
+       } 
+     
+       
     } 
+   
 
- 
-
-    return <Card className="auth"> {/* on utilise la classe auth pour styliser mon formulaire */}
+    return <React.Fragment>
+      <ErrorModal error={error} onClear={ clearError}/>
+      <Card className="authentication"> {/* on utilise la classe auth pour styliser mon formulaire */}
+        {isLoading&&<LoadingSpinner asOverlay/>}
         {isLoginMode ? <h2> Connexion obligatoire </h2> : <h2> Inscription obligatoire </h2>} {/* on affiche le titre en fonction du mode de connexion */}
      <form className="place-form" onSubmit={compteSubmitHandler}> {/* on utilise la classe place-form pour styliser mon formulaire */}
        { !isLoginMode && <Input
@@ -101,14 +149,15 @@ const Auth = () => {
            <Button type="submit" disabled={!formState.isValid}>
             {isLoginMode?'CONNEXION':'INSCRIPTION'}
            </Button>  
+           </form>
           <React.Fragment> 
           {isLoginMode && <a href="/motPasseOublie">Mot de passe oublié </a>} 
-            </React.Fragment>
-            <Button inverse onClick={swicthModeHandler}> {/* on utilise le bouton inverse pour changer de mode */}
+          <Button inverse onClick={swicthModeHandler}> {/* on utilise le bouton inverse pour changer de mode */}
              SWITCH A {!isLoginMode?'CONNEXION':'INSCRIPTION'}
             </Button> {/* on utilise le bouton inverse pour changer de mode */}
-        </form>
+            </React.Fragment>
+           
         </Card>
-        
+        </React.Fragment>
 }
 export default Auth;

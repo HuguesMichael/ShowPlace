@@ -1,22 +1,34 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import ListeUtilisateurs from '../composants/ListeUtilisateurs'; // Importation du composant ListeUtilisateurs
+import ErrorModal from '../../Partage/composants/UIElements/ErrorModal';
+import LoadingSpinner from '../../Partage/composants/UIElements/LoadingSpinner';
+import {useHttpClient} from '../../Partage/hooks/http-hook'; // Importation du hook useHttpClient
 const Utilisateur = () => {
-   const UTILISATEURS=[
-  {
-   id:"u1", 
-   nom:"Temgoua", 
-   image:"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Maple_Leaf_%28from_roundel%29.png/330px-Maple_Leaf_%28from_roundel%29.png",
-   nombreDePlaces:3
-  },
-  {
-    id:"u2", 
-    nom:"Hugues", 
-    image:"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Maple_Leaf_%28from_roundel%29.png/330px-Maple_Leaf_%28from_roundel%29.png",
-    nombreDePlaces:5
-   }]; // contiendra les utilisateurs provenant de la base de données
-  // const [utilisateurs, setUtilisateurs] = useState([]); // État pour stocker les utilisateurs
+  
+  const [loadedUsers, setloadedUsers] = useState();
+  const {isLoading, error, sendRequest, clearError} = useHttpClient(); // Utilisation du hook useHttpClient
+  useEffect(()=>{   // Il n'est pas conseillé d'utiliser async directement dans le fonction parmètre de useEffect
+     const fetchUsers = async () => {
+     try {
+           const donneesResponse=  await sendRequest("http://localhost:5000/api/users/");
+             setloadedUsers(donneesResponse.users);
+     } catch (error) {
+     
+     }}
+     fetchUsers(); // Appel de la fonction fetchUsers
+     
+    } ,[sendRequest]); // Le tableau de dépendances est vide, donc useEffect ne s'exécute qu'une seule fois lors du premier rendu du composant
+
+ 
   return (
-   <ListeUtilisateurs utilisateurs={UTILISATEURS}/>
+   <React.Fragment>
+     <ErrorModal error={error} onClear={clearError}/>
+      {isLoading&& 
+      <div className="center ">
+         <LoadingSpinner asOverlay/>
+       </div>}
+{!isLoading && loadedUsers && <ListeUtilisateurs utilisateurs={loadedUsers}/>}
+   </React.Fragment>
   );
 }
 export default Utilisateur;

@@ -1,5 +1,4 @@
 import HttpError from '../models/http-error.js';
-import { v4 as uuidv4 } from 'uuid';
 import { validationResult } from 'express-validator';
 import User from '../models/user.js'
 
@@ -10,7 +9,7 @@ const getUtilisateurs = async (req, res, next)=>{   // ":" permet de creer un pa
         
          let users;
          try {
-             users = await User.find({},'-password');
+             users = await User.find({},'-motdepasse');
         } catch (error) {
              return next (
                 new HttpError(
@@ -18,12 +17,12 @@ const getUtilisateurs = async (req, res, next)=>{   // ":" permet de creer un pa
                     500))
         }
         if(users.length===0){ return res.json({message:"Aucun utilisateur existant pour le moment"});} 
-         res.json({Users:users.map(u=>u.toObject({getters:true}))}); // {place} <=> {place: place}
+         res.json({users:users.map(u=>u.toObject({getters:true}))}); // {place} <=> {place: place}
     
     }
 // ------------------------------- create user ------------------------------------------------
     const createUser = async (req, res, next)=>{
-        const {name,email, password} =req.body;
+        const {nom,email, motdepasse} =req.body;
         const errors= validationResult(req); // il se sert da la configuration de check effectuée
         console.log(errors);
        if(!errors.isEmpty()){
@@ -48,9 +47,9 @@ const getUtilisateurs = async (req, res, next)=>{   // ":" permet de creer un pa
     }
         
         const createdUser= new User({
-            name,
+            nom,
             email,
-            password,
+            motdepasse,
             image:'https://upload.wikimedia.org/wikipedia/commons/b/b7/Maple_Leaf_%28from_roundel%29.png',
             places: []
         });
@@ -68,7 +67,7 @@ const getUtilisateurs = async (req, res, next)=>{   // ":" permet de creer un pa
 
     //---------------------- login user ---------------------------------------------------
     const loginUser= async (req, res, next)=>{
-        const {email, password} =req.body;
+        const {email, motdepasse} =req.body;
         let findedUser;
         try {
             findedUser= await User.findOne({email:email})
@@ -78,7 +77,7 @@ const getUtilisateurs = async (req, res, next)=>{   // ":" permet de creer un pa
             )
         }
       
-        if(!findedUser || findedUser.password!==password ){
+        if(!findedUser || findedUser.motdepasse!==motdepasse ){
             return next( 
                 new HttpError("Utilisateur inexistant, veuillez entrer les bonnes informations",
                     401));

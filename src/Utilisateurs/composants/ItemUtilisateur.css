@@ -1,67 +1,51 @@
 .item-utilisateur {
+    margin: 1rem;
+    width: calc(45% - 2rem);
+    min-width: 17.5rem;
+  }
+  
+  .item-utilisateur a {
     display: flex;
-    align-items: center; /* Align items vertically centered */
-    justify-content: flex-start; /* Align content to the start horizontally */
-    padding: 10px 15px;
-    margin: 10px auto; /* Center the box horizontally */
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #f9f9f9;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
-    max-width: 200px; /* Optional: Limit the width */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional: Add shadow for better visibility */
-    flex-direction: row; /* Place children side by side */
-}
-
-.item-utilisateur__image {
-    margin-right: 15px; /* Add spacing between the image and the info box */
-}
-.item-utilisateur:hover {
-    background-color: #cbcb21;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-
-.item-utilisateur__image {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    overflow: hidden;
-    margin: 0 auto; /* Center the image horizontally */
-    display: flex;
-    justify-content: center;
     align-items: center;
-}
-
-
-.item-utilisateur__info {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    font-size: 14px;
-    color: #333;
-}
-
-.item-utilisateur__info h3 {
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
+    padding: 1rem;
+    color: white;
+    background: #292929;
+  }
+  
+  .item-utilisateur a:hover,
+  .item-utilisateur a:active {
+    background: #ffd900;
+  }
+  
+  .item-utilisateur__content {
+    padding: 0;
+  }
+  
+  .item-utilisateur__image {
+    width: 4rem;
+    height: 4rem;
+    margin-right: 1rem;
+  }
+  
+  .item-utilisateur__info h2 {
+    font-size: 1.5rem;
+    margin: 0 0 0.5rem 0;
+    font-weight: normal;
+    color: #ffd900;
+  }
+  
+  .item-utilisateur:hover h2,
+  .item-utilisateur:active h2,
+  .item-utilisateur:hover h3,
+  .item-utilisateur:active h3 {
+    color: #292929;
+  }
+  
+  .item-utilisateur__info h3 {
     margin: 0;
-    font-size: 16px;
-    font-weight: bold;
-    color: #000;
-}
+  }
 
-.item-utilisateur {
-    flex-direction: column;
-    align-items: flex-start;
-}
 
-.item-utilisateur__image {
-    margin-bottom: 10px;
-}
-
-.item-utilisateur__info {
-    align-items: flex-start;
-}
-.center{
-    text-align: center;
-    margin-top: 10px; /* Optional: Add some space above the text */
-}
