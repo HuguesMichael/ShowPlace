@@ -12,10 +12,10 @@ const LiensNavigation = props => {
                    Tous les Utilisateurs
                 </NavLink>
             </li>
-            {auth.isLoggedIn && ( // Si l'utilisateur est connecté ce lien s'affiche
+            {auth.isLoggedIn && ( // Si l'utilisateur est connecté ce lien s'affiche "/u1/places/"
             <li className="liens-navigation__element">
-                <NavLink to="/u1/places/" exact> 
-                    Mes lieux
+                <NavLink to={`utilisateur/${auth.userId}/places/`} exact> 
+                    Mes lieux    
                 </NavLink>
             </li>)}
             {auth.isLoggedIn && ( // Si l'utilisateur est connecté ce lien s'affiche    

@@ -14,11 +14,14 @@ import { AuthContext } from './Partage/context/auth-context'; // Importation du 
 const App = () => {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false); // État pour gérer la connexion de l'utilisateur
-  const login = useCallback(() => { // Fonction pour connecter l'utilisateur
+  const [userId, setUserId] = useState(null); // État pour gérer l'ID de l'utilisateur
+  const login = useCallback((uid) => { // Fonction pour connecter l'utilisateur
     setIsLoggedIn(true); // Met à jour l'état de connexion
+    setUserId(uid); // Met à jour l'ID de l'utilisateur
   }, []);
   const logout = useCallback(() => { // Fonction pour déconnecter l'utilisateur
     setIsLoggedIn(false); // Met à jour l'état de connexion
+    setUserId(null); // Réinitialise l'ID de l'utilisateur
   }, []);
 
   let routes; // Déclaration de la variable routes
@@ -61,7 +64,7 @@ const App = () => {
   } 
 
   return (
-    <AuthContext.Provider value={{isLoggedIn:isLoggedIn, login:login, logout:logout}}> {/* Fournisseur de contexte d'authentification */}
+    <AuthContext.Provider value={{isLoggedIn:isLoggedIn, userId:userId, login:login, logout:logout}}> {/* Fournisseur de contexte d'authentification */}
     <Router>
       <NagitionPrincipale /> {/* Utilisation de la navigation principale */}
       <main>

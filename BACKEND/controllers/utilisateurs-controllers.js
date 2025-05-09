@@ -82,7 +82,7 @@ const getUtilisateurs = async (req, res, next)=>{   // ":" permet de creer un pa
                 new HttpError("Utilisateur inexistant, veuillez entrer les bonnes informations",
                     401));
         }
-        res.status(200).json({message: "connecté avec succès"});
+        res.status(200).json({message: "connecté avec succès", user:findedUser.toObject({getters:true})});
        // res.status(200).json(findedUser);
 
     }

@@ -1,43 +1,26 @@
-import React, {use, useEffect,useState}from 'react';
+import React, {useEffect,useState}from 'react';
 import "./MiseAjourPlace.css";
 import "./PlaceForm.css";
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import Input from '../../Partage/composants/FormElements/Input';
-import { VALIDATOR_MINLENGTH, VALIDATOR_REQUIRE } from '../../Partage/Util/validators'; // on importe la fonction validate qui va nous permettre de valider notre input
 import Button from '../../Partage/composants/FormElements/Button';
-import { useCallback, useReducer } from 'react';
 import { useForm } from '../../Partage/hooks/Form-hooks'; // on importe le hook useForm qui va nous permettre de gérer l'état de mon formulaire
 import Card from '../../Partage/composants/UIElements/Card';
-const PLACE_PROVISOIRE = [
-    {
-        id: "p1",
-        imageUrl: "https://images.unsplash.com/photo-1519985176271-adb1088fa94c",
-        title: "Un endroit magnifique",
-        description: "C'est un endroit magnifique",
-        address: "Paris, France",
-        creator: "u1",
-        localisation: {
-            lat: 48.8566,
-            lng: 2.3522
-        }
-    },
-    {
-        id: "p2",
-        imageUrl: "https://www.saimondy.com/wp-content/uploads/2021/10/Le-match-Cameroun-Mozambique-se-jouera-a-Japoma.jpg",
-        title: "stade de Japoma",
-        description: "C'est l'un des plus grands stades du Cameroun",
-        address: "Douala, Cameroun",
-        creator: "u2",
-        localisation: {
-            lat: 4.0059909,
-            lng: 9.8227537
-        }
-    }
-];
+import ErrorModal from '../../Partage/composants/UIElements/ErrorModal';
+import LoadingSpinner from '../../Partage/composants/UIElements/LoadingSpinner'; // on importe le composant LoadingSpinner qui va nous permettre de gérer le chargement de notre formulaire
+import { useHttpClient } from '../../Partage/hooks/http-hook';
+import { VALIDATOR_MINLENGTH, VALIDATOR_REQUIRE } from '../../Partage/Util/validators'; // on importe la fonction validate qui va nous permettre de valider notre input
+import { useContext } from 'react'; // on importe le hook useContext qui va nous permettre de gérer le contexte d'authentification
+import { AuthContext } from '../../Partage/context/auth-context'; // on importe le contexte d'authentification  
+
+
+
 
 const  MiseAjourPlace = () => {
-    const [isLoading, setIsLoading] = useState(true); // on initialise l'état de mon formulaire avec les inputs du formulaire qui seront necessaire pour la validation
-
+    const auth = useContext(AuthContext); // on utilise le contexte d'authentification pour gérer l'état de mon formulaire
+    const history = useHistory(); // on utilise le hook useHistory pour rediriger l'utilisateur vers une autre page
+    const {isLoading, error, sendRequest, clearError} = useHttpClient(); // on utilise le hook useHttpClient pour gérer les requêtes HTTP
+    const  [identifiedPlace, setidentifiedPlace] = useState( ); // on initialise l'état de mon formulaire avec les inputs du formulaire qui seront necessaire pour la validation
     const placeId = useParams().placeId; // Récupération de l'ID de la place depuis l'URL
     
     {/* pour un depart on met value='' et isValid=false pour patientier que le chargement des bonnes valeurs
@@ -49,39 +32,53 @@ const  MiseAjourPlace = () => {
 
     const [formState, inputHandler, setFormData] = useForm({
 
-        title: { // on initialise l'état de mon formulaire avec les inputs du formulaire qui seront necessaire pour la validation
-            value: '', // valeur initiale de l'input, si elle n'est pas fournie, on met une chaîne vide
+        title: { 
+            value: '', 
             isValid: false // validité initiale de l'input, si elle n'est pas fournie, on met false
         },
-        description: { // on initialise l'état de mon formulaire avec les inputs du formulaire qui seront necessaire pour la validation
-            value: '', // valeur initiale de l'input, si elle n'est pas fournie, on met une chaîne vide
+        description: { 
+            value: '', 
             isValid: false // validité initiale de l'input, si elle n'est pas fournie, on met false
         }
     },false )
 
-    const identifiedPlace = PLACE_PROVISOIRE.find(place => place.id === placeId); // Filtrage des places par utilisat
-   
     useEffect(() => { // useEffect est un hook qui permet de gérer les effets de bord dans un composant fonctionnel
-      if(identifiedPlace) { // si la place n'est pas trouvée, on affiche un message d'erreur
-        setFormData({
-        title: { 
-            value: identifiedPlace.title, // valeur initiale provenant de la place identifiee après la requete de selection
-            isValid: true // on met la validité de l'input à true car on a déjà une valeur valide
-        },
-        description: {
-            value: identifiedPlace.description, // valeur initiale provenant de la place identifiee après la requete de selection
-            isValid: true // on met la validité de l'input à true car on a déjà une valeur valide
+        const fetchPlace = async () => {
+
+            try {
+                const responseData = await sendRequest(`http://localhost:5000/api/places/${placeId}`); // on envoie une requete pour recuperer la place
+                setidentifiedPlace(responseData.place); 
+                    setFormData({
+                    title: { 
+                        value: responseData.place.title, // valeur initiale provenant de la place identifiee après la requete de selection
+                        isValid: true // on met la validité de l'input à true car on a déjà une valeur valide
+                    },
+                    description: {
+                        value: responseData.place.description, // valeur initiale provenant de la place identifiee après la requete de selection
+                        isValid: true // on met la validité de l'input à true car on a déjà une valeur valide
+                    }
+                     // on met l'état de mon formulaire à false car le chargement est terminé
+                 }, true)
+                        // on utilise la fonction setFormData pour mettre à jour l'état de mon formulaire avec les inputs du formulaire qui seront necessaire pour la validation 
+                
+            } catch (err) {
+                
+            }
         }
-         // on met l'état de mon formulaire à false car le chargement est terminé
-     }, true)
-            // on utilise la fonction setFormData pour mettre à jour l'état de mon formulaire avec les inputs du formulaire qui seront necessaire pour la validation 
+        fetchPlace();
+    } , [sendRequest, placeId, setFormData]); // on utilise le hook useEffect pour mettre à jour l'état de mon formulaire lorsque la place identifiée change
+        
+    if(isLoading) 
+        { 
+        return <div className='center'>
+                 <h2><LoadingSpinner asOverlay/></h2>
+               </div>; 
+    
     }
-     setIsLoading(false);
-    }, [setFormData, identifiedPlace]); // on utilise le hook useEffect pour mettre à jour l'état de mon formulaire lorsque la place identifiée change
-   
-    if(!identifiedPlace) { // Si la place n'est pas trouvée, on affiche un message d'erreur
+
+    if(!identifiedPlace && !error) { // Si la place n'est pas trouvée, on affiche un message d'erreur
         return ( <div className='center'>
-            <Card>  
+            <Card>
             <h2>Place non trouvée </h2>
             </Card>
             </div>
@@ -89,22 +86,31 @@ const  MiseAjourPlace = () => {
           
     }
 
-    if(isLoading) 
-        { 
-        return <div className='center'>
-                 <h2>Loading..... </h2>
-               </div>; 
-    
-    }
+  
 
-    const placeUpdateSubmitHandler = event => { // fonction qui sera appelée lors de la soumission du formulaire
+    const placeUpdateSubmitHandler = async event => { // fonction qui sera appelée lors de la soumission du formulaire
         event.preventDefault(); // on empêche le rechargement de la page lors de la soumission du formulaire    
-       console.log(formState.inputs); // on affiche les inputs du formulaire dans la console
-       // ici on peut envoyer une requête HTTP pour mettre à jour la place dans la base de données
+     try {
+        // ici on peut envoyer une requête HTTP pour mettre à jour la place dans la base de données
+       await  sendRequest(`http://localhost:5000/api/places/${placeId}`, 'PATCH', { // on envoie une requete pour mettre à jour la place
+            'Content-Type': 'application/json', // on envoie les données au format JSON
+        },
+        JSON.stringify({ // on convertit les données en JSON
+            title: formState.inputs.title.value, // on récupère la valeur de l'input title
+            description: formState.inputs.description.value, // on récupère la valeur de l'input description
+        }))
+      
+    history.push(`/utilisateur/${auth.userId}/places`); // on redirige l'utilisateur vers la page d'accueil après la soumission du formulaire
+        
+     } catch (error) {
+        
+     }
+       
     }
- 
 
-    return <form className="place-form" onSubmit={placeUpdateSubmitHandler}> {/* onSubmit est une fonction qui sera appelée lors de la soumission du formulaire */}
+    return( <React.Fragment>
+         {<ErrorModal error={error} onClear={clearError} />}
+    {!isLoading && identifiedPlace && <form className="place-form" onSubmit={placeUpdateSubmitHandler}> {/* onSubmit est une fonction qui sera appelée lors de la soumission du formulaire */}
         <Input
          id="title"
           element="input" 
@@ -132,7 +138,8 @@ const  MiseAjourPlace = () => {
            
           />
           <Button type="submit" disabled={!formState.isValid}>Mettre à jour</Button> 
-    </form>;
+    </form>}
+    </React.Fragment>)
 
 }
 export default MiseAjourPlace;

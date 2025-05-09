@@ -4,8 +4,10 @@ import placeRoutes from './routes/places-routes.js';
 import utilisateursRoutes from './routes/utilisateurs-routes.js'
 import HttpError from './models/http-error.js';
 import mongoose from 'mongoose';
+import cors from 'cors'; // Importation de cors pour gérer les problèmes de CORS
 const app= express();
 const port =5000;
+app.use(cors()); // Utilisation de cors pour gérer les problèmes de CORS
 
 //app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());

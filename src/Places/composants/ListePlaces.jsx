@@ -1,4 +1,3 @@
-import react from "react";
 import "./ListePlaces.css";
 import Card from "../../Partage/composants/UIElements/Card";
 import ItemPlace from "./ItemPlace";
@@ -20,12 +19,13 @@ const ListePlaces = props => {
                     <ItemPlace
                         key={place.id}
                         id={place.id}
-                        image={place.imageUrl}
+                        image={place.image}
                         title={place.title}
                         description={place.description}
                         address={place.address}
                         creatorId={place.creator}
                         coordonnees={place.localisation}
+                        onDelete={props.onDeletePlace} // Fonction de suppression passée en props
                     />
                 );
             })}

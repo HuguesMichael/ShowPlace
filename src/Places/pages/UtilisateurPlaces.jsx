@@ -1,46 +1,48 @@
-import react from "react";
+import React, {useState,useEffect} from "react";
 import ListePlaces from "../composants/ListePlaces";
 import {useParams} from "react-router-dom";
-
-
-const PLACE_PROVISOIRE = [
-{
-    id: "p1",
-    imageUrl: "https://images.unsplash.com/photo-1519985176271-adb1088fa94c",
-    title: "Un endroit magnifique",
-    description: "C'est un endroit magnifique",
-    address: "Paris, France",
-    creator: "u1",
-    localisation: {
-        lat: 48.8566,
-        lng: 2.3522
-    }
-},
-{
-    id: "p2",
-    imageUrl: "https://www.saimondy.com/wp-content/uploads/2021/10/Le-match-Cameroun-Mozambique-se-jouera-a-Japoma.jpg",
-    title: "stade de Japoma",
-    description: "C'est l'un des plus grands stades du Cameroun",
-    address: "Douala, Cameroun",
-    creator: "u2",
-    localisation: {
-        lat: 4.0059909,
-        lng: 9.8227537
-    }
-}
- ];
+import { useHttpClient } from "../../Partage/hooks/http-hook"; // Importation du hook pour les requêtes HTTP
+//import { AuthContext } from "../../Partage/context/auth-context"; // Importation du contexte d'authentification
+//import { useContext } from "react"; // Importation de useContext pour utiliser le contexte d'authentification
+import ErrorModal from "../../Partage/composants/UIElements/ErrorModal";
+import LoadingSpinner from "../../Partage/composants/UIElements/LoadingSpinner"; // Importation du composant de chargement
 
 const UtilisateurPlaces = () => {
     //const [places, setPlaces] = useState([]);
-    const userId = useParams().userId; // Récupération de l'ID de l'utilisateur depuis l'URL
-    const loadedPlaces = PLACE_PROVISOIRE.filter(place => place.creator === userId); // Filtrage des places par utilisateur
-    return <ListePlaces
+    const {userId} = useParams(); // Récupération de l'ID de l'utilisateur à partir des paramètres de l'URL
+    const {isLoading, error, sendRequest, clearError} = useHttpClient(); // Utilisation du hook pour les requêtes HTTP
+    //const auth = useContext(AuthContext); // Utilisation du contexte d'authentification
+    const [loadedPlaces, setLoadedPlaces] = useState([]); // État pour stocker les places chargées
+    useEffect(() => {
+    const fetchPlaces = async () => {
+    try {
+        const responseData = await sendRequest(`http://localhost:5000/api/places/user/${userId}`); // Requête pour récupérer les places de l'utilisateur
+        setLoadedPlaces(responseData.places); // Mise à jour de l'état avec les places récupérées
+    } catch (error) {
+        }
+        }
+        fetchPlaces(); // Appel de la fonction pour charger les places
+    },[sendRequest, userId]); // Dépendances du useEffect pour recharger les places si l'utilisateur change
+   
+     const deletePlaceHandler = (deletedPlaceId) => {
+        setLoadedPlaces((prevPlaces) => prevPlaces.filter(place => place.id !== deletedPlaceId)); // Mise à jour de l'état pour supprimer la place supprimée
+    }
+
+    return <React.Fragment>
+         <ErrorModal error={error} onClear={ clearError}/>
+      {isLoading && (
+        <div className="center">
+            <LoadingSpinner asOverlay />
+        </div> ) }
+       
+     {!isLoading && loadedPlaces && <ListePlaces
         items={loadedPlaces}
         onCreatePlace={() => {}}
-        onDeletePlace={() => {}}
+        onDeletePlace={deletePlaceHandler} // Fonction de suppression passée en props
         onEditPlace={() => {}}
         onViewMap={() => {}} 
-        />;
+        />}
+        </React.Fragment>
 }   
 
 export default UtilisateurPlaces;

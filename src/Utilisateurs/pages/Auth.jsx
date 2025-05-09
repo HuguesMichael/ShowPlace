@@ -1,4 +1,4 @@
-import react,{useState,useContext} from 'react';
+import {useState,useContext} from 'react';
 import "../../Places/pages/PlaceForm.css";
 import Input from '../../Partage/composants/FormElements/Input';
 import Button from '../../Partage/composants/FormElements/Button';
@@ -65,7 +65,7 @@ const Auth = () => {
       if(isLoginMode){
         /*------------------------------ Code pour login ------------------------*/    
         try {
-          await sendRequest(
+         const donneesResponse= await sendRequest(
             "http://localhost:5000/api/users/login",
             'POST',
             {
@@ -76,7 +76,7 @@ const Auth = () => {
              motdepasse: formState.inputs.motdepasse.value
            })
         )
-            auth.login();
+            auth.login(donneesResponse.user.id); // on utilise le hook useContext pour gérer l'état de mon formulaire
           
         } catch (err) {
           //console.log(error);
@@ -85,7 +85,7 @@ const Auth = () => {
         /*------------------------------ Code pour signup ------------------------*/
         try {
           
-           await sendRequest(
+        const donneesResponse=  await sendRequest(
             "http://localhost:5000/api/users/signup",   // fetch === Aller chercher
             'POST',
             {
@@ -98,7 +98,7 @@ const Auth = () => {
               })
             
            )
-               auth.login();
+           auth.login(donneesResponse.user.id); // on utilise le hook useContext pour gérer l'état de mon formulaire
         } catch (err) {
           
           console.log(error);

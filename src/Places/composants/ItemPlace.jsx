@@ -1,14 +1,21 @@
 import react,{useState,useContext} from "react";
 import "./ItemPlace.css";
+import { useHistory } from "react-router-dom"; // Importation de useHistory pour la navigation
 import Card from "../../Partage/composants/UIElements/Card";
 import Button from "../../Partage/composants/FormElements/Button";
 import Modal from "../../Partage/composants/UIElements/Modal";
+import ErrorModal from "../../Partage/composants/UIElements/ErrorModal";
+import LoadingSpinner from "../../Partage/composants/UIElements/LoadingSpinner"; // Importation du composant de chargement
+import { useHttpClient } from "../../Partage/hooks/http-hook"; 
 import React from "react";
 import Map from "../../Partage/composants/UIElements/Map"; // Importation du composant Map
 import { AuthContext } from "../../Partage/context/auth-context"; // Importation du contexte d'authentification
 
 
 const ItemPlace = props => {
+    const history = useHistory(); // Utilisation de useHistory pour la navigation
+    const auth=useContext(AuthContext); // Utilisation du contexte d'authentification
+    const {isLoading, error, sendRequest, clearError} = useHttpClient(); // Utilisation du hook pour les requêtes HTTP
     const [VoirCarte, setVoirCarte] = useState(false); // Etat pour afficher ou masquer le modal
     const [VoirConfirmationModal, setVoirConfirmationModal] = useState(false); // Etat pour afficher ou masquer le modal de suppression
      // Logique pour modifier la place   
@@ -27,15 +34,22 @@ const ItemPlace = props => {
         setVoirConfirmationModal(false); // Ferme le modal de suppression
 
     }
-    const confirmerSuppressionHandler = () => {
+    const confirmerSuppressionHandler =  async () => {
         setVoirConfirmationModal(false);
-        console.log("SUPPRIMER........"); // Ferme le modal de suppression
-        // Logique pour supprimer la place ici
-        // Par exemple, appeler une fonction pour supprimer la place dans la base de données
+        try {
+            await sendRequest(`http://localhost:5000/api/places/${props.id}`, 'DELETE'); // Envoie une requête DELETE pour supprimer la place
+            props.onDelete(props.id); // Appelle la fonction de suppression passée en props
+           // history.push(`/utilisateur/${auth.userId}/places`);
+        } catch (err) {
+            
+        }
+      
+
     }
 
-   const auth=useContext(AuthContext); // Utilisation du contexte d'authentification
      return <React.Fragment>  
+        <ErrorModal error={error} onClear={clearError} /> {/* Affiche le modal d'erreur si une erreur se produit */}
+       
     <Modal
         show={VoirCarte} // Affiche le modal si l'état est vrai
         onCancel={fermerCarteHandler} // Ferme le modal lorsque l'utilisateur clique en dehors de celui-ci
@@ -78,6 +92,8 @@ const ItemPlace = props => {
         
      <li className="item-place">  
     <Card className="item-place__card"> 
+    {isLoading && <LoadingSpinner asOverlay />} {/* Affiche le spinner de chargement si isLoading est vrai */}
+    {/* Modal pour afficher la carte */}
         <div className="item-place__image">
             <img src={props.image} alt={props.title} />
         </div>
@@ -88,8 +104,8 @@ const ItemPlace = props => {
         </div>
         <div className="item-place__actions">
             <Button inverse onClick={ouvrirCarteHandler} >VOIR SUR LA CARTE</Button> 
-            {auth.isLoggedIn&&<Button to={`/places/${props.id}`}>Modifier</Button>}
-            {auth.isLoggedIn&&<Button danger onClick={ouvrirConfirmationModalHandler}> Supprimer</Button>}
+            {auth.userId===props.creatorId &&<Button to={`/places/${props.id}`}>Modifier</Button>}
+            {auth.userId===props.creatorId &&<Button danger onClick={ouvrirConfirmationModalHandler}> Supprimer</Button>}
             </div>
         </Card>
     </li>

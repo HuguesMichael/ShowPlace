@@ -11,7 +11,8 @@ router.post(
     [check('title').not().isEmpty(),    // ici on met tous nos mesures de contrôles. les paramètres de check
                  // doivent êtes les mêmes nom qui sont trasmis dans le body de la requête
         check('description').isLength({min:5}),
-        check('address').not().isEmpty()
+        check('address').not().isEmpty(),
+        check('localisation').not().isEmpty()
     ],
     placesControllers.createPlace) /* une remarque, lorsqu'on crée un tel middleware, on ne peut ajouter plus d'une méthode après
 le chemin*/
